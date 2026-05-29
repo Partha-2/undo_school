@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: undo-school
+    runtime: image
+    repo: https://github.com/Partha-2/undo_school
+    branch: main
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://ep-wandering-band-ap4nbuc6-pooler.c-7.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+    healthCheckPath: /courses
