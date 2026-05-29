@@ -92,12 +92,11 @@ function BookingCard({ booking }) {
 }
 
 /* ─── Pages ────────────────────────────────────────────── */
-function BrowsePage({ parentId, setParentId, refreshBookings }) {
+function BrowsePage({ parentId, parentName, onParentCreated, refreshBookings }) {
   const [offerings, setOfferings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
   const [success, setSuccess] = useState('');
-  const [parentName, setParentName] = useState('');
 
   const tz = detectTimezone();
 
@@ -133,8 +132,7 @@ function BrowsePage({ parentId, setParentId, refreshBookings }) {
         email: form.get('email'),
         timezone: tz,
       });
-      setParentId(p.id);
-      setParentName(p.name);
+      onParentCreated(p.id, p.name);
       setSuccess(`Parent "${p.name}" created! ID: ${p.id.slice(0, 8)}...`);
     } catch (e) { setErr(e.message); }
   }
@@ -324,11 +322,9 @@ function TeacherPortal() {
   );
 }
 
-function ParentPortal() {
+function ParentPortal({ parentId, parentName, onParentCreated }) {
   const [err, setErr] = useState('');
   const [success, setSuccess] = useState('');
-  const [parentId, setParentId] = useState('');
-  const [parentName, setParentName] = useState('');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -354,8 +350,7 @@ function ParentPortal() {
         email: form.get('email'),
         timezone: tz,
       });
-      setParentId(p.id);
-      setParentName(p.name);
+      onParentCreated(p.id, p.name);
       setSuccess(`Welcome, ${p.name}!`);
     } catch (e) { setErr(e.message); }
   }
@@ -426,6 +421,11 @@ function TabBtn({ active, onClick, children }) {
 /* ─── App ──────────────────────────────────────────────── */
 export default function App() {
   const [tab, setTab] = useState('browse');
+  const [parentId, setParentId] = useState('');
+  const [parentName, setParentName] = useState('');
+  const [bookingsKey, setBookingsKey] = useState(0);
+
+  function refreshBookings() { setBookingsKey(k => k + 1); }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
@@ -442,9 +442,23 @@ export default function App() {
       </header>
 
       <main>
-        {tab === 'browse' && <BrowsePage />}
+        {tab === 'browse' && (
+          <BrowsePage
+            parentId={parentId}
+            parentName={parentName}
+            onParentCreated={(id, name) => { setParentId(id); setParentName(name); }}
+            refreshBookings={refreshBookings}
+          />
+        )}
         {tab === 'teacher' && <TeacherPortal />}
-        {tab === 'parent' && <ParentPortal />}
+        {tab === 'parent' && (
+          <ParentPortal
+            key={bookingsKey}
+            parentId={parentId}
+            parentName={parentName}
+            onParentCreated={(id, name) => { setParentId(id); setParentName(name); }}
+          />
+        )}
       </main>
     </div>
   );
