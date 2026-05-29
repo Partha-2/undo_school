@@ -40,10 +40,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException e) {
-        if (e.getMessage() != null && e.getMessage().contains("bookings_parent_id_offering_id_key")) {
+        String msg = e.getMessage() != null ? e.getMessage() : "";
+        if (msg.contains("bookings_parent_id_offering_id_key"))
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse(409, "Already booked this offering"));
-        }
+        if (msg.toLowerCase().contains("email"))
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse(409, "Email already registered"));
+        if (msg.toLowerCase().contains("unique") || msg.contains("UK_"))
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse(409, "Duplicate entry violates unique constraint"));
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(409, "Data integrity violation"));
     }
