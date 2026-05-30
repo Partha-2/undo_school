@@ -15,6 +15,8 @@ Frontend (Vercel)  ────►  Backend (Render)  ────►  PostgreSQ
 |---------|-----|
 | **Frontend** | https://frontend-five-kappa-79.vercel.app |
 | **Backend API** | https://undo-school-1.onrender.com |
+| **Swagger UI** | https://undo-school-1.onrender.com/swagger-ui/index.html |
+| **OpenAPI JSON** | https://undo-school-1.onrender.com/v3/api-docs |
 
 ## Features
 
